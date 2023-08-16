@@ -187,11 +187,11 @@ function addRole(){
         ])
         .then (res => {
             const newRoleTitle = res.title;
-
+            let departmentID;
 
             res.forEach((department) => {
-                if (departments.name === department.name){
-                    const departmentID = department.id;
+                if (departments === department.name){
+                    departmentID = department.id;
                 }
             })
 
