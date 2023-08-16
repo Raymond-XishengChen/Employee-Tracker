@@ -150,8 +150,8 @@ function addEmployee(){
                     const manager = managerChoice.manager;
                     newEmployee.push(manager);
                     const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
-                    connection.query(sql, newEmployee, (error) => {
-                    if (error) throw error;
+                    connection.query(sql, newEmployee, (err) => {
+                    if (err) throw err;
                     console.log("Employee added successfully!");
                     viewAllEmployees();
                     });
@@ -162,10 +162,72 @@ function addEmployee(){
     });
     };
     
+function addRole(){
+    const sql = 'SELECT * FROM department';
+    connection.query(sql, (err, res) => {
+        if (err) throw err;
+        const departments = res.map(department => department.name);
+        inquirer.prompt([
+            {
+                type: 'input',
+                message: 'Please enter the name of the new role:',
+                name: 'title',
+            },
+            {
+                type: 'input',
+                message: 'Please enter the salary of the new role:',
+                name: 'salay'
+            },
+            {
+                type: 'list',
+                message: 'Please select the department that you want to add the new role into:',
+                name: 'department',
+                choices: departments
+            }
+        ])
+        .then (res => {
+            const newRoleTitle = res.title;
 
 
+            res.forEach((department) => {
+                if (departments.name === department.name){
+                    const departmentID = department.id;
+                }
+            })
 
-// Update Employee Role
+            const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`;
+            const newRole = [newRoleTitle, res.salary, departmentID];
+
+            connection.query(sql, newRole, (err) => {
+                if (err) throw err;
+
+            })
+            viewAllRoles();
+
+        });
+
+
+    })
+}
+
+
+// Add Department
+function addDepartment(){
+    inquirer.prompt ([
+        {
+            type: 'input',
+            message: 'Please enter the name of the new department:',
+            name: 'departmentName'
+        }
+    ]).then ((response) => {
+        const sql = `INSERT INTO department (name) VALUES (?)`;
+        connection.query(sql, response.departmentName, (err, res) => {
+            if (err) throw err;
+        })
+        console.log("New department added");
+        viewAllDepartment();
+    })
+}
 
 // View All Roles
 function viewAllRoles(){
@@ -178,6 +240,7 @@ function viewAllRoles(){
 
     connection.query(sql, (err, res) => {
         if (err) throw err;
+        console.log("\n");
         console.table(res);
     })
     init();
@@ -193,6 +256,7 @@ function viewAllDepartment(){
 
     connection.query(sql, (err, res) => {
         if (err) throw err;
+        console.log("\n");
         console.table(res);
     })
     init();
